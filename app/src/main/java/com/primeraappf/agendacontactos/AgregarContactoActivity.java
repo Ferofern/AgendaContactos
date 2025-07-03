@@ -49,7 +49,6 @@ public class AgregarContactoActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(adapter);
 
-        // Lista de provincias de Ecuador
         String[] provincias = {
                 "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "El Oro",
                 "Esmeraldas", "Galápagos", "Guayas", "Imbabura", "Loja", "Los Ríos",
@@ -68,10 +67,8 @@ public class AgregarContactoActivity extends AppCompatActivity {
 
         gestorContactos = GestorContactos.getInstance(this);
 
-        // Inicializa la primera caja de teléfono
         agregarCajaTelefono();
 
-        // Configurar el EditText de cumpleaños para que abra un DatePicker
         etCumpleanos.setInputType(InputType.TYPE_NULL);
         etCumpleanos.setOnClickListener(v -> mostrarDatePicker());
         etCumpleanos.setOnFocusChangeListener((v, hasFocus) -> {
@@ -85,7 +82,6 @@ public class AgregarContactoActivity extends AppCompatActivity {
             String ciudadSeleccionada = spinnerCiudad.getSelectedItem().toString();
             String tipoSeleccionado = spinnerTipo.getSelectedItem().toString();  // <-- Aquí
 
-            // Recolectar todos los teléfonos no vacíos
             String[] telefonos = obtenerTelefonos();
 
             if (nombre.isEmpty() || apellido.isEmpty() || telefonos.length == 0) {
@@ -94,15 +90,11 @@ public class AgregarContactoActivity extends AppCompatActivity {
             }
 
             try {
-                // Ahora usamos el tipo seleccionado en lugar de "Personal" fijo
                 Contacto nuevo = gestorContactos.crearContacto(tipoSeleccionado, telefonos[0]);
-
-                // Agregar teléfonos adicionales si hay más de uno
                 for (int i = 1; i < telefonos.length; i++) {
                     nuevo.addTelefono(telefonos[i]);
                 }
 
-                // Añadir atributos
                 nuevo.addAtributo("nombre", nombre);
                 nuevo.addAtributo("apellido", apellido);
                 nuevo.addAtributo("correo", correo);

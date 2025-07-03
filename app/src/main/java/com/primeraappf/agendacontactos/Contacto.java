@@ -44,29 +44,8 @@ public class Contacto {
         }
     }
 
-    public void removeTelefono(String telefono) {
-        for (int i = 0; i < totalTelefonos; i++) {
-            if (telefonos[i].equals(telefono)) {
-                for (int j = i; j < totalTelefonos - 1; j++) {
-                    telefonos[j] = telefonos[j + 1];
-                }
-                telefonos[--totalTelefonos] = null;
-                break;
-            }
-        }
-    }
-
-    public void mostrarTelefonos() {
-        System.out.print("Teléfonos: ");
-        for (int i = 0; i < totalTelefonos; i++) {
-            System.out.print(telefonos[i]);
-            if (i < totalTelefonos - 1) System.out.print(", ");
-        }
-        System.out.println();
-    }
 
 
-    // Asociados
     public Contacto[] getAsociadosArray() {
         return asociados;
     }
@@ -81,37 +60,13 @@ public class Contacto {
         }
     }
 
-    public void mostrarAsociados() {
-        System.out.println("Contactos asociados:");
-        for (int i = 0; i < totalAsociados; i++) {
-            System.out.println("  ID: " + asociados[i].getId() + ", Tipo: " + asociados[i].getTipo());
-        }
-    }
+
 
     // Atributos
     public void addAtributo(String clave, String valor) {
         atributos.put(clave, valor);
     }
 
-    public void removeAtributo(String clave) {
-        atributos.remove(clave);
-    }
 
-    public void mostrarAtributos() {
-        System.out.println("Atributos:");
-        for (Map.Entry<String, String> entry : atributos.entrySet()) {
-            System.out.println("  " + entry.getKey() + ": " + entry.getValue());
-        }
-    }
-
-    public String getNombreCompleto() {
-        String nombre = atributos.getOrDefault("nombre", "");
-        String apellido = atributos.getOrDefault("apellido", "");
-        if (!nombre.isEmpty() && !apellido.isEmpty()) {
-            return nombre + " " + apellido;
-        } else {
-            return nombre + apellido; // uno de los dos o ninguno
-        }
-    }
 }
 

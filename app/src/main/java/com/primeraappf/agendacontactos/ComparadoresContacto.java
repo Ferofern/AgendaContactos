@@ -56,11 +56,9 @@ public class ComparadoresContacto {
             cFecha1.setTime(date1);
             cFecha2.setTime(date2);
 
-            // Reemplazamos el año por el actual
             cFecha1.set(Calendar.YEAR, hoy.get(Calendar.YEAR));
             cFecha2.set(Calendar.YEAR, hoy.get(Calendar.YEAR));
 
-            // Si la fecha ya pasó este año, ponemos para el siguiente
             if (cFecha1.before(hoy)) cFecha1.add(Calendar.YEAR, 1);
             if (cFecha2.before(hoy)) cFecha2.add(Calendar.YEAR, 1);
 

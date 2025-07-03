@@ -38,7 +38,7 @@ public class BuscarActivity extends AppCompatActivity {
         recyclerBusqueda.setLayoutManager(new LinearLayoutManager(this));
 
         setListeners();
-        actualizarLista(); // Mostrar todos al principio
+        actualizarLista();
     }
 
     private void setListeners() {
@@ -92,10 +92,6 @@ public class BuscarActivity extends AppCompatActivity {
         }
 
         adapter = new ContactoAdapter(listaFiltrada, contacto -> {
-            // Si deseas abrir el detalle desde aquí:
-            // Intent intent = new Intent(this, DetalleContactoActivity.class);
-            // intent.putExtra("contacto_id", contacto.getId());
-            // startActivity(intent);
         });
 
         recyclerBusqueda.setAdapter(adapter);

@@ -1,9 +1,13 @@
 package com.primeraappf.agendacontactos;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
-import java.util.Map;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Map;
 
 public class DetalleContactoActivity extends AppCompatActivity {
 
@@ -14,6 +18,9 @@ public class DetalleContactoActivity extends AppCompatActivity {
     private TextView tvTelefonosDetalle;
     private TextView tvAtributosDetalle;
     private TextView tvAsociadosDetalle;
+    private Button btnBorrarContacto;
+
+    private String contactoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +34,21 @@ public class DetalleContactoActivity extends AppCompatActivity {
         tvTelefonosDetalle = findViewById(R.id.tvTelefonosDetalle);
         tvAtributosDetalle = findViewById(R.id.tvAtributosDetalle);
         tvAsociadosDetalle = findViewById(R.id.tvAsociadosDetalle);
+        btnBorrarContacto = findViewById(R.id.btnBorrarContacto);
 
-        String contactoId = getIntent().getStringExtra("contacto_id");
+        contactoId = getIntent().getStringExtra("contacto_id");
         if (contactoId != null) {
             mostrarDetalleContacto(contactoId);
         }
+
+        btnBorrarContacto.setOnClickListener(v -> {
+            if (contactoId != null) {
+                gestorContactos.eliminarContacto(contactoId);
+                gestorContactos.guardarContactos();
+                Toast.makeText(this, "Contacto borrado", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
     private void mostrarDetalleContacto(String id) {
@@ -62,4 +79,6 @@ public class DetalleContactoActivity extends AppCompatActivity {
         tvAsociadosDetalle.setText(asociados.toString());
     }
 }
+
+
 

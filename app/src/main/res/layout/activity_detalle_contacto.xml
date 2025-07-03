@@ -1,55 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvNombreDetalle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nombre"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:paddingBottom="8dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:id="@+id/tvTipoDetalle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tipo"
             android:textSize="18sp"
-            android:paddingBottom="12dp" />
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/tvTelefonosDetalle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Teléfonos"
             android:textSize="16sp"
-            android:paddingBottom="12dp" />
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/tvAtributosDetalle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Atributos"
             android:textSize="16sp"
-            android:paddingBottom="12dp" />
-
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/tvAsociadosDetalle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Contactos asociados"
             android:textSize="16sp"
-            android:paddingBottom="12dp" />
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/btnBorrarContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Borrar Contacto"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:padding="12dp"/>
 
     </LinearLayout>
 </ScrollView>
+

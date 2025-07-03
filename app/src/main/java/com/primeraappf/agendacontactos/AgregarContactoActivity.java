@@ -1,43 +1,115 @@
 package com.primeraappf.agendacontactos;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class AgregarContactoActivity extends AppCompatActivity {
 
-    private EditText etTipo, etNombre, etTelefono;
+    private EditText etNombre, etApellido, etCorreo, etCumpleanos;
+    private Spinner spinnerCiudad;
+    private LinearLayout layoutTelefonos;
     private Button btnGuardar;
+
     private GestorContactos gestorContactos;
+
+    private String fechaCumpleanosGuardar = "";
+
+    private Spinner spinnerTipo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_contacto);
 
-        etTipo = findViewById(R.id.etTipo);
         etNombre = findViewById(R.id.etNombre);
-        etTelefono = findViewById(R.id.etTelefono);
+        etApellido = findViewById(R.id.etApellido);
+        etCorreo = findViewById(R.id.etCorreo);
+        etCumpleanos = findViewById(R.id.etCumpleanos);
+        spinnerCiudad = findViewById(R.id.spinnerCiudad);
+        layoutTelefonos = findViewById(R.id.layoutTelefonos);
         btnGuardar = findViewById(R.id.btnGuardar);
+        spinnerTipo = findViewById(R.id.spinnerTipo);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.tipos_contacto, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapter);
+
+        // Lista de provincias de Ecuador
+        String[] provincias = {
+                "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "El Oro",
+                "Esmeraldas", "Galápagos", "Guayas", "Imbabura", "Loja", "Los Ríos",
+                "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza", "Pichincha",
+                "Santa Elena", "Santo Domingo de los Tsáchilas", "Sucumbíos", "Tungurahua",
+                "Zamora Chinchipe"
+        };
+
+        ArrayAdapter<String> adapterProvincias = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                provincias
+        );
+        adapterProvincias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCiudad.setAdapter(adapterProvincias);
 
         gestorContactos = GestorContactos.getInstance(this);
 
-        btnGuardar.setOnClickListener(v -> {
-            String tipo = etTipo.getText().toString().trim();
-            String nombre = etNombre.getText().toString().trim();
-            String telefono = etTelefono.getText().toString().trim();
+        // Inicializa la primera caja de teléfono
+        agregarCajaTelefono();
 
-            if (tipo.isEmpty() || nombre.isEmpty() || telefono.length() < 2) {
-                Toast.makeText(this, "Por favor, completa todos los campos y asegúrate que el teléfono tenga al menos 2 dígitos.", Toast.LENGTH_LONG).show();
+        // Configurar el EditText de cumpleaños para que abra un DatePicker
+        etCumpleanos.setInputType(InputType.TYPE_NULL);
+        etCumpleanos.setOnClickListener(v -> mostrarDatePicker());
+        etCumpleanos.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) mostrarDatePicker();
+        });
+
+        btnGuardar.setOnClickListener(v -> {
+            String nombre = etNombre.getText().toString().trim();
+            String apellido = etApellido.getText().toString().trim();
+            String correo = etCorreo.getText().toString().trim();
+            String ciudadSeleccionada = spinnerCiudad.getSelectedItem().toString();
+            String tipoSeleccionado = spinnerTipo.getSelectedItem().toString();  // <-- Aquí
+
+            // Recolectar todos los teléfonos no vacíos
+            String[] telefonos = obtenerTelefonos();
+
+            if (nombre.isEmpty() || apellido.isEmpty() || telefonos.length == 0) {
+                Toast.makeText(this, "Por favor completa nombre, apellido y al menos un teléfono.", Toast.LENGTH_LONG).show();
                 return;
             }
 
             try {
-                Contacto nuevo = gestorContactos.crearContacto(tipo, telefono);
+                // Ahora usamos el tipo seleccionado en lugar de "Personal" fijo
+                Contacto nuevo = gestorContactos.crearContacto(tipoSeleccionado, telefonos[0]);
+
+                // Agregar teléfonos adicionales si hay más de uno
+                for (int i = 1; i < telefonos.length; i++) {
+                    nuevo.addTelefono(telefonos[i]);
+                }
+
+                // Añadir atributos
                 nuevo.addAtributo("nombre", nombre);
+                nuevo.addAtributo("apellido", apellido);
+                nuevo.addAtributo("correo", correo);
+                nuevo.addAtributo("ciudad", ciudadSeleccionada);
+                if (!fechaCumpleanosGuardar.isEmpty()) {
+                    nuevo.addAtributo("cumpleaños", fechaCumpleanosGuardar);
+                }
 
                 gestorContactos.guardarContactos();
 
@@ -48,6 +120,68 @@ public class AgregarContactoActivity extends AppCompatActivity {
                 Toast.makeText(this, "Error al crear el contacto: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+    private void mostrarDatePicker() {
+        final Calendar calendario = Calendar.getInstance();
+        int año = calendario.get(Calendar.YEAR);
+        int mes = calendario.get(Calendar.MONTH);
+        int dia = calendario.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog picker = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            Calendar fechaSeleccionada = Calendar.getInstance();
+            fechaSeleccionada.set(year, month, dayOfMonth);
+
+            SimpleDateFormat formatoVisible = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            etCumpleanos.setText(formatoVisible.format(fechaSeleccionada.getTime()));
+
+            SimpleDateFormat formatoGuardar = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            fechaCumpleanosGuardar = formatoGuardar.format(fechaSeleccionada.getTime());
+
+        }, año, mes, dia);
+        picker.show();
+    }
+
+    private void agregarCajaTelefono() {
+        EditText nuevoTelefono = new EditText(this);
+        nuevoTelefono.setHint("Teléfono");
+        nuevoTelefono.setInputType(InputType.TYPE_CLASS_PHONE);
+        nuevoTelefono.setSingleLine(true);
+        layoutTelefonos.addView(nuevoTelefono);
+
+        nuevoTelefono.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().trim().isEmpty()) {
+                    if (layoutTelefonos.getChildAt(layoutTelefonos.getChildCount() - 1) == nuevoTelefono) {
+                        agregarCajaTelefono();
+                    }
+                }
+            }
+        });
+    }
+
+    private String[] obtenerTelefonos() {
+        int count = layoutTelefonos.getChildCount();
+        java.util.List<String> lista = new java.util.ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            View v = layoutTelefonos.getChildAt(i);
+            if (v instanceof EditText) {
+                String tel = ((EditText) v).getText().toString().trim();
+                if (!tel.isEmpty()) {
+                    lista.add(tel);
+                }
+            }
+        }
+        return lista.toArray(new String[0]);
     }
 }
 

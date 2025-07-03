@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AgendaContactos</string>
+    <string-array name="tipos_contacto">
+        <item>Persona natural</item>
+        <item>Empresa</item>
+    </string-array>
 </resources>

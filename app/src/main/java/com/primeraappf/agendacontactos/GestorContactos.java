@@ -74,17 +74,6 @@ public class GestorContactos {
         return lista;
     }
 
-    public void mostrarContactos(Contacto[] lista) {
-        for (Contacto c : lista) {
-            System.out.println("ID: " + c.getId());
-            System.out.println("Nombre: " + c.getAtributos().getOrDefault("nombre", "N/A"));
-            System.out.println("Tipo: " + c.getTipo());
-            c.mostrarTelefonos();
-            c.mostrarAtributos();
-            c.mostrarAsociados();
-            System.out.println("--------------------------");
-        }
-    }
 
     public boolean existeId(String id) {
         return contactos.containsKey(id);

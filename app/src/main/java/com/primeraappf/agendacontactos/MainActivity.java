@@ -2,20 +2,26 @@ package com.primeraappf.agendacontactos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
     private GestorContactos gestorContactos;
-    private RecyclerView recyclerContactos;
-    private ContactoAdapter adapter;
+    private NavegadorContactos navegador;
+
+    private TextView tvNombreCompleto, tvTipo, tvTelefonos;
+    private Button btnAnterior, btnSiguiente;
     private BottomNavigationView bottomNavigation;
 
     @Override
@@ -25,10 +31,34 @@ public class MainActivity extends AppCompatActivity {
 
         gestorContactos = GestorContactos.getInstance(this);
 
-        recyclerContactos = findViewById(R.id.recyclerContactos);
-        recyclerContactos.setLayoutManager(new LinearLayoutManager(this));
+        Contacto[] contactosArray = gestorContactos.getTodos();
 
+        // Ordenar alfabéticamente por nombre + apellido
+        List<Contacto> contactosOrdenados = Arrays.stream(contactosArray)
+                .sorted(Comparator.comparing(
+                        c -> (c.getAtributos().getOrDefault("nombre", "") + " " + c.getAtributos().getOrDefault("apellido", ""))
+                                .toLowerCase()
+                ))
+                .collect(Collectors.toList());
+
+        if (contactosOrdenados.isEmpty()) {
+            Toast.makeText(this, "No hay contactos para mostrar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        navegador = new NavegadorContactos(contactosOrdenados);
+
+        // Referencias UI
+        tvNombreCompleto = findViewById(R.id.tvNombreCompleto);
+        tvTipo = findViewById(R.id.tvTipo);
+        tvTelefonos = findViewById(R.id.tvTelefonos);
+        btnAnterior = findViewById(R.id.btnAnterior);
+        btnSiguiente = findViewById(R.id.btnSiguiente);
         bottomNavigation = findViewById(R.id.bottomNavigation);
+
+        btnAnterior.setOnClickListener(v -> mostrarContacto(navegador.anterior()));
+        btnSiguiente.setOnClickListener(v -> mostrarContacto(navegador.siguiente()));
+
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -45,30 +75,29 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        if (gestorContactos.getTodos().length == 0) {
-            Contacto c1 = gestorContactos.crearContacto("Personal", "0998765432");
-            c1.addAtributo("nombre", "Felix Romero");
-            Contacto c2 = gestorContactos.crearContacto("Trabajo", "0987654321");
-            c2.addAtributo("nombre", "Ana Perez");
-            gestorContactos.guardarContactos();
-        }
-
-        actualizarLista();
+        // Mostrar primer contacto
+        mostrarContacto(navegador.actual());
     }
 
-    private void actualizarLista() {
-        Contacto[] listaContactos = gestorContactos.getTodos();
-        adapter = new ContactoAdapter(Arrays.asList(listaContactos), contacto -> {
-            Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);
-            intent.putExtra("contacto_id", contacto.getId());
-            startActivity(intent);
-        });
-        recyclerContactos.setAdapter(adapter);
+    private void mostrarContacto(Contacto c) {
+        String nombre = c.getAtributos().getOrDefault("nombre", "");
+        String apellido = c.getAtributos().getOrDefault("apellido", "");
+        tvNombreCompleto.setText(nombre + " " + apellido);
+        tvTipo.setText("Tipo: " + c.getTipo());
+
+        StringBuilder telefonos = new StringBuilder();
+        for (int i = 0; i < c.getTotalTelefonos(); i++) {
+            telefonos.append(c.getTelefonosArray()[i]);
+            if (i < c.getTotalTelefonos() - 1) telefonos.append(", ");
+        }
+        tvTelefonos.setText("Teléfonos: " + telefonos.toString());
     }
 
     private void buscarContacto() {
-        // Implementa buscar contacto si quieres
+        Intent intent = new Intent(this, BuscarActivity.class);
+        startActivity(intent);
     }
+
 
     private void anadirContacto() {
         Intent intent = new Intent(this, AgregarContactoActivity.class);
@@ -76,16 +105,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void eliminarContacto() {
-        // Implementa eliminar contacto si quieres
+        Contacto c = navegador.actual();
+        gestorContactos.eliminarContacto(c.getId());
+        Toast.makeText(this, "Contacto eliminado: " + c.getAtributos().getOrDefault("nombre", ""), Toast.LENGTH_SHORT).show();
+
+        // Recargar lista y navegador
+        Contacto[] contactosArray = gestorContactos.getTodos();
+        if (contactosArray.length == 0) {
+            tvNombreCompleto.setText("");
+            tvTipo.setText("");
+            tvTelefonos.setText("");
+            Toast.makeText(this, "No hay más contactos.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<Contacto> contactosOrdenados = Arrays.stream(contactosArray)
+                .sorted(Comparator.comparing(
+                        cont -> (cont.getAtributos().getOrDefault("nombre", "") + " " + cont.getAtributos().getOrDefault("apellido", ""))
+                                .toLowerCase()
+                ))
+                .collect(Collectors.toList());
+
+        navegador = new NavegadorContactos(contactosOrdenados);
+        mostrarContacto(navegador.actual());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Recarga y refresca la lista para mostrar contactos añadidos/eliminados
-        actualizarLista();
+
+        // Recarga para reflejar cambios si se agregó contacto nuevo
+        Contacto[] contactosArray = gestorContactos.getTodos();
+        if (contactosArray.length == 0) return;
+
+        List<Contacto> contactosOrdenados = Arrays.stream(contactosArray)
+                .sorted(Comparator.comparing(
+                        c -> (c.getAtributos().getOrDefault("nombre", "") + " " + c.getAtributos().getOrDefault("apellido", ""))
+                                .toLowerCase()
+                ))
+                .collect(Collectors.toList());
+
+        if (navegador == null) {
+            navegador = new NavegadorContactos(contactosOrdenados);
+        }
     }
+
+
 }
+
+
 
 
 

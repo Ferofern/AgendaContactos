@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/nav_buscar"
-        android:icon="@android:drawable/ic_menu_search"
-        android:title="Buscar" />
-
+        android:title="Buscar"
+        android:icon="@android:drawable/ic_menu_search" />
     <item
         android:id="@+id/nav_anadir"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="Añadir" />
-
+        android:title="Añadir"
+        android:icon="@android:drawable/ic_input_add" />
     <item
         android:id="@+id/nav_eliminar"
-        android:icon="@android:drawable/ic_delete"
-        android:title="Eliminar" />
-
+        android:title="Eliminar"
+        android:icon="@android:drawable/ic_menu_delete" />
 </menu>
+

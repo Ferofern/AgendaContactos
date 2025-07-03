@@ -103,4 +103,15 @@ public class Contacto {
             System.out.println("  " + entry.getKey() + ": " + entry.getValue());
         }
     }
+
+    public String getNombreCompleto() {
+        String nombre = atributos.getOrDefault("nombre", "");
+        String apellido = atributos.getOrDefault("apellido", "");
+        if (!nombre.isEmpty() && !apellido.isEmpty()) {
+            return nombre + " " + apellido;
+        } else {
+            return nombre + apellido; // uno de los dos o ninguno
+        }
+    }
 }
+

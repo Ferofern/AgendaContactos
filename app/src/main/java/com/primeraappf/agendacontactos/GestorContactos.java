@@ -155,7 +155,6 @@ public class GestorContactos {
                 }
 
                 tempContactos.put(id, c);
-                // No asociados ya que no usas fotos y puedes manejar esta parte si quieres
             }
 
             contactos.putAll(tempContactos);

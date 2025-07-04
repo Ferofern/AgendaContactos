@@ -60,14 +60,18 @@
                 android:layout_height="wrap_content"
                 android:text="Tipo de contacto" />
 
-            <Button
-                android:id="@+id/btnAplicarBusqueda"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Aplicar Búsqueda"
-                android:layout_marginTop="12dp"/>
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/tvCriterios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sin criterios activos"
+        android:padding="8dp"
+        android:textColor="#6200EE"
+        android:background="#E1BEE7"
+        android:layout_marginTop="8dp"/>
 
     <View
         android:layout_width="match_parent"

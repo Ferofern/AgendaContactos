@@ -100,7 +100,7 @@ public class AgregarContactoActivity extends AppCompatActivity {
                 nuevo.addAtributo("nombre", nombre);
                 nuevo.addAtributo("apellido", apellido);
                 nuevo.addAtributo("correo", correo);
-                nuevo.addAtributo("provincia", provinciaSeleccionada);  // CORRECCIÓN AQUÍ
+                nuevo.addAtributo("provincia", provinciaSeleccionada);
                 if (!fechaCumpleanosGuardar.isEmpty()) {
                     nuevo.addAtributo("cumpleaños", fechaCumpleanosGuardar);
                 }

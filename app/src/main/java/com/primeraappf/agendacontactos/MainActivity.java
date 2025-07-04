@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
         gestorContactos.eliminarContacto(c.getId());
         Toast.makeText(this, "Contacto eliminado: " + c.getAtributos().getOrDefault("nombre", ""), Toast.LENGTH_SHORT).show();
 
-        // Recargar lista y navegador
         Contacto[] contactosArray = gestorContactos.getTodos();
         if (contactosArray.length == 0) {
             tvNombreCompleto.setText("");

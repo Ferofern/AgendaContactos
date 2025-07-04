@@ -35,15 +35,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LinearLayout contenidoCard = findViewById(R.id.linearLayoutContenido);
-        contenidoCard.setOnClickListener(v -> {
-            Contacto c = navegador.actual();
-            if (c != null) {
-                Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);
-                intent.putExtra("contacto_id", c.getId());
-                startActivity(intent);
-            }
-        });
 
         gestorContactos = GestorContactos.getInstance(this);
         imgFotoContacto = findViewById(R.id.imgFotoContacto);
@@ -62,9 +53,21 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Inicializa navegador ANTES de usarlo en listeners
         navegador = new NavegadorContactos(contactosOrdenados);
 
-        // Referencias UI
+        LinearLayout contenidoCard = findViewById(R.id.linearLayoutContenido);
+        contenidoCard.setOnClickListener(v -> {
+            if (navegador == null) return; // Protección extra
+            Contacto c = navegador.actual();
+            if (c != null) {
+                Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);
+                intent.putExtra("contacto_id", c.getId());
+                startActivity(intent);
+            }
+        });
+
+
         tvNombreCompleto = findViewById(R.id.tvNombreCompleto);
         tvTipo = findViewById(R.id.tvTipo);
         tvTelefonos = findViewById(R.id.tvTelefonos);
@@ -72,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         btnSiguiente = findViewById(R.id.btnSiguiente);
         bottomNavigation = findViewById(R.id.bottomNavigation);
 
-        // Botones de cambio de foto
         Button btnFotoAnterior = findViewById(R.id.btnFotoAnterior);
         Button btnFotoSiguiente = findViewById(R.id.btnFotoSiguiente);
 
@@ -107,9 +109,9 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // CardView clickable para abrir detalles
         CardView cardContacto = findViewById(R.id.cardContacto);
         cardContacto.setOnClickListener(v -> {
+            if (navegador == null) return;
             Contacto c = navegador.actual();
             if (c != null) {
                 Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         mostrarContacto(navegador.actual());
     }
+
 
 
     private void mostrarContacto(Contacto c) {

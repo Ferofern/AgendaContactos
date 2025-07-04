@@ -1,9 +1,9 @@
 package com.primeraappf.agendacontactos;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,19 +82,27 @@ public class BuscarActivity extends AppCompatActivity {
         listaFiltrada = new ArrayList<>(Arrays.asList(todos));
 
         if (!comparadoresActivos.isEmpty()) {
-            Comparator<Contacto> compuesto = comparadoresActivos.iterator().next();
-            for (Comparator<Contacto> c : comparadoresActivos) {
-                if (c != compuesto) {
-                    compuesto = compuesto.thenComparing(c);
-                }
+            // Construir comparador compuesto con thenComparing
+            Iterator<Comparator<Contacto>> it = comparadoresActivos.iterator();
+            Comparator<Contacto> compuesto = it.next();
+            while (it.hasNext()) {
+                compuesto = compuesto.thenComparing(it.next());
             }
+
             listaFiltrada.sort(compuesto);
+
+            // Debug: imprimir nombre y provincia de cada contacto después de ordenar
+            for (Contacto c : listaFiltrada) {
+                String nombre = c.getAtributos().getOrDefault("nombre", "N/A");
+                String provincia = c.getAtributos().getOrDefault("provincia", "N/A");
+                Log.d("BuscarActivity", "Contacto: " + nombre + " - Provincia: " + provincia);
+            }
         }
 
         adapter = new ContactoAdapter(listaFiltrada, contacto -> {
+            // Aquí puedes agregar acción al hacer clic en un contacto si quieres
         });
 
         recyclerBusqueda.setAdapter(adapter);
     }
 }
-

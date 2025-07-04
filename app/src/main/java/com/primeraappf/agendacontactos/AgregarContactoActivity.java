@@ -45,10 +45,11 @@ public class AgregarContactoActivity extends AppCompatActivity {
         layoutTelefonos = findViewById(R.id.layoutTelefonos);
         btnGuardar = findViewById(R.id.btnGuardar);
         spinnerTipo = findViewById(R.id.spinnerTipo);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+
+        ArrayAdapter<CharSequence> adapterTipo = ArrayAdapter.createFromResource(
                 this, R.array.tipos_contacto, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTipo.setAdapter(adapter);
+        adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapterTipo);
 
         String[] provincias = {
                 "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "El Oro",
@@ -80,8 +81,8 @@ public class AgregarContactoActivity extends AppCompatActivity {
             String nombre = etNombre.getText().toString().trim();
             String apellido = etApellido.getText().toString().trim();
             String correo = etCorreo.getText().toString().trim();
-            String ciudadSeleccionada = spinnerCiudad.getSelectedItem().toString();
-            String tipoSeleccionado = spinnerTipo.getSelectedItem().toString();  // <-- Aquí
+            String provinciaSeleccionada = spinnerCiudad.getSelectedItem().toString();
+            String tipoSeleccionado = spinnerTipo.getSelectedItem().toString();
 
             String[] telefonos = obtenerTelefonos();
 
@@ -99,7 +100,7 @@ public class AgregarContactoActivity extends AppCompatActivity {
                 nuevo.addAtributo("nombre", nombre);
                 nuevo.addAtributo("apellido", apellido);
                 nuevo.addAtributo("correo", correo);
-                nuevo.addAtributo("ciudad", ciudadSeleccionada);
+                nuevo.addAtributo("provincia", provinciaSeleccionada);  // CORRECCIÓN AQUÍ
                 if (!fechaCumpleanosGuardar.isEmpty()) {
                     nuevo.addAtributo("cumpleaños", fechaCumpleanosGuardar);
                 }
@@ -144,12 +145,8 @@ public class AgregarContactoActivity extends AppCompatActivity {
         layoutTelefonos.addView(nuevoTelefono);
 
         nuevoTelefono.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().trim().isEmpty()) {
@@ -175,4 +172,5 @@ public class AgregarContactoActivity extends AppCompatActivity {
         return telefonos.toArray(new String[0]);
     }
 }
+
 

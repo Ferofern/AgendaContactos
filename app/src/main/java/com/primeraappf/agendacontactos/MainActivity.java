@@ -53,12 +53,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Inicializa navegador ANTES de usarlo en listeners
         navegador = new NavegadorContactos(contactosOrdenados);
 
         LinearLayout contenidoCard = findViewById(R.id.linearLayoutContenido);
         contenidoCard.setOnClickListener(v -> {
-            if (navegador == null) return; // Protección extra
+            if (navegador == null) return;
             Contacto c = navegador.actual();
             if (c != null) {
                 Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);

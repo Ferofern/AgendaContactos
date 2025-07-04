@@ -14,6 +14,9 @@ public class Contacto {
     private Contacto[] asociados = new Contacto[10];
     private int totalAsociados = 0;
 
+    private String[] fotos;
+    private int fotoActual = 0;
+
     public Contacto(String id, String tipo, String telefonoInicial) {
         this.id = id;
         this.tipo = tipo;
@@ -26,7 +29,37 @@ public class Contacto {
     public void setTipo(String tipo) { this.tipo = tipo; }
     public TreeMap<String, String> getAtributos() { return atributos; }
 
-    // Teléfonos
+    public void setAtributos(Map<String, String> nuevosAtributos) {
+        this.atributos.clear();
+        this.atributos.putAll(nuevosAtributos);
+    }
+
+    public void setFotos(String[] rutas) {
+        this.fotos = rutas;
+        this.fotoActual = 0;
+    }
+
+    public String[] getFotos() {
+        return fotos;
+    }
+
+    public String getFotoActual() {
+        if (fotos == null || fotos.length == 0) return null;
+        return fotos[fotoActual];
+    }
+
+    public String fotoSiguiente() {
+        if (fotos == null || fotos.length == 0) return null;
+        fotoActual = (fotoActual + 1) % fotos.length;
+        return fotos[fotoActual];
+    }
+
+    public String fotoAnterior() {
+        if (fotos == null || fotos.length == 0) return null;
+        fotoActual = (fotoActual - 1 + fotos.length) % fotos.length;
+        return fotos[fotoActual];
+    }
+
     public String[] getTelefonosArray() {
         return telefonos;
     }
@@ -44,8 +77,6 @@ public class Contacto {
         }
     }
 
-
-
     public Contacto[] getAsociadosArray() {
         return asociados;
     }
@@ -60,13 +91,11 @@ public class Contacto {
         }
     }
 
-
-
-    // Atributos
     public void addAtributo(String clave, String valor) {
         atributos.put(clave, valor);
     }
 
-
+    public void eliminarAtributo(String clave) {
+        atributos.remove(clave);
+    }
 }
-

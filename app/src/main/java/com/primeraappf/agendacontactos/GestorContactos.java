@@ -6,7 +6,6 @@ import java.util.*;
 
 public class GestorContactos {
     private static GestorContactos instancia;
-
     private TreeMap<String, Contacto> contactos;
     private Queue<Integer> colaIds;
     private static final String NOMBRE_ARCHIVO = "contactos.txt";
@@ -15,7 +14,7 @@ public class GestorContactos {
     private GestorContactos(Context context) {
         this.context = context.getApplicationContext();
         contactos = new TreeMap<>();
-        colaIds = new LinkedList<>();
+        colaIds = new ArrayDeque<>();
         for (int i = 1; i <= 1000; i++) {
             colaIds.add(i);
         }
@@ -27,10 +26,6 @@ public class GestorContactos {
             instancia = new GestorContactos(context);
         }
         return instancia;
-    }
-
-    public void agregarContactoDirectamente(String id, Contacto c) {
-        contactos.put(id, c);
     }
 
     public Contacto crearContacto(String tipo, String telefonoInicial) {
@@ -67,13 +62,6 @@ public class GestorContactos {
         Collection<Contacto> valores = contactos.values();
         return valores.toArray(new Contacto[0]);
     }
-
-    public Contacto[] getContactosOrdenados(Comparator<Contacto> comp) {
-        Contacto[] lista = getTodos();
-        Arrays.sort(lista, comp);
-        return lista;
-    }
-
 
     public boolean existeId(String id) {
         return contactos.containsKey(id);
@@ -113,7 +101,6 @@ public class GestorContactos {
 
                 sb.append("|"); // No fotos
 
-                // Asociados (si quieres mantener la funcionalidad)
                 for (int i = 0; i < c.getTotalAsociados(); i++) {
                     sb.append(c.getAsociadosArray()[i].getId());
                     if (i < c.getTotalAsociados() - 1) sb.append(",");

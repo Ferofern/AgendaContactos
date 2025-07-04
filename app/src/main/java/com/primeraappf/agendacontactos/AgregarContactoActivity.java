@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Vector;
 
 public class AgregarContactoActivity extends AppCompatActivity {
 
@@ -161,19 +162,17 @@ public class AgregarContactoActivity extends AppCompatActivity {
     }
 
     private String[] obtenerTelefonos() {
-        int count = layoutTelefonos.getChildCount();
-        java.util.List<String> lista = new java.util.ArrayList<>();
-
-        for (int i = 0; i < count; i++) {
+        Vector<String> telefonos = new Vector<>();
+        for (int i = 0; i < layoutTelefonos.getChildCount(); i++) {
             View v = layoutTelefonos.getChildAt(i);
             if (v instanceof EditText) {
                 String tel = ((EditText) v).getText().toString().trim();
                 if (!tel.isEmpty()) {
-                    lista.add(tel);
+                    telefonos.add(tel);
                 }
             }
         }
-        return lista.toArray(new String[0]);
+        return telefonos.toArray(new String[0]);
     }
 }
 

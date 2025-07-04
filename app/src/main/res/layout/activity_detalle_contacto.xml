@@ -41,7 +41,15 @@
             android:layout_height="wrap_content"
             android:text="Atributos"
             android:textSize="16sp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Aquí debe ir el layout para los atributos dinámicos -->
+        <LinearLayout
+            android:id="@+id/layoutAtributos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:id="@+id/tvAsociadosDetalle"
@@ -60,6 +68,15 @@
             android:textColor="@android:color/white"
             android:padding="12dp"/>
 
+        <!-- Opcional: agregar botón para guardar cambios (si quieres edición de atributos) -->
+        <Button
+            android:id="@+id/btnGuardarCambios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar Cambios"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 </ScrollView>
+
 

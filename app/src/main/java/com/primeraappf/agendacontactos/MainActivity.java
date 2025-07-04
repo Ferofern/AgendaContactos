@@ -1,21 +1,27 @@
 package com.primeraappf.agendacontactos;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
+    private ImageView imgFotoContacto;
 
     private GestorContactos gestorContactos;
     private NavegadorContactos navegador;
@@ -24,16 +30,26 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAnterior, btnSiguiente;
     private BottomNavigationView bottomNavigation;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        LinearLayout contenidoCard = findViewById(R.id.linearLayoutContenido);
+        contenidoCard.setOnClickListener(v -> {
+            Contacto c = navegador.actual();
+            if (c != null) {
+                Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);
+                intent.putExtra("contacto_id", c.getId());
+                startActivity(intent);
+            }
+        });
 
         gestorContactos = GestorContactos.getInstance(this);
+        imgFotoContacto = findViewById(R.id.imgFotoContacto);
 
         Contacto[] contactosArray = gestorContactos.getTodos();
 
-        // Ordenar alfabéticamente por nombre + apellido
         List<Contacto> contactosOrdenados = Arrays.stream(contactosArray)
                 .sorted(Comparator.comparing(
                         c -> (c.getAtributos().getOrDefault("nombre", "") + " " + c.getAtributos().getOrDefault("apellido", ""))
@@ -56,6 +72,22 @@ public class MainActivity extends AppCompatActivity {
         btnSiguiente = findViewById(R.id.btnSiguiente);
         bottomNavigation = findViewById(R.id.bottomNavigation);
 
+        // Botones de cambio de foto
+        Button btnFotoAnterior = findViewById(R.id.btnFotoAnterior);
+        Button btnFotoSiguiente = findViewById(R.id.btnFotoSiguiente);
+
+        btnFotoAnterior.setOnClickListener(v -> {
+            Contacto c = navegador.actual();
+            c.fotoAnterior();
+            mostrarContacto(c);
+        });
+
+        btnFotoSiguiente.setOnClickListener(v -> {
+            Contacto c = navegador.actual();
+            c.fotoSiguiente();
+            mostrarContacto(c);
+        });
+
         btnAnterior.setOnClickListener(v -> mostrarContacto(navegador.anterior()));
         btnSiguiente.setOnClickListener(v -> mostrarContacto(navegador.siguiente()));
 
@@ -75,9 +107,20 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // Mostrar primer contacto
+        // CardView clickable para abrir detalles
+        CardView cardContacto = findViewById(R.id.cardContacto);
+        cardContacto.setOnClickListener(v -> {
+            Contacto c = navegador.actual();
+            if (c != null) {
+                Intent intent = new Intent(MainActivity.this, DetalleContactoActivity.class);
+                intent.putExtra("contacto_id", c.getId());
+                startActivity(intent);
+            }
+        });
+
         mostrarContacto(navegador.actual());
     }
+
 
     private void mostrarContacto(Contacto c) {
         String nombre = c.getAtributos().getOrDefault("nombre", "");
@@ -91,19 +134,29 @@ public class MainActivity extends AppCompatActivity {
             if (i < c.getTotalTelefonos() - 1) telefonos.append(", ");
         }
         tvTelefonos.setText("Teléfonos: " + telefonos.toString());
+
+        String rutaFoto = c.getFotoActual();
+        if (rutaFoto != null) {
+            File file = new File(getFilesDir(), rutaFoto);
+            if (file.exists()) {
+                imgFotoContacto.setImageURI(Uri.fromFile(file));
+            } else {
+                imgFotoContacto.setImageResource(R.drawable.ic_person_placeholder);
+            }
+        } else {
+            imgFotoContacto.setImageResource(R.drawable.ic_person_placeholder);
+        }
+
     }
 
     private void buscarContacto() {
         Intent intent = new Intent(this, BuscarActivity.class);
         startActivity(intent);
     }
-
-
     private void anadirContacto() {
         Intent intent = new Intent(this, AgregarContactoActivity.class);
         startActivity(intent);
     }
-
     private void eliminarContacto() {
         Contacto c = navegador.actual();
         gestorContactos.eliminarContacto(c.getId());
@@ -118,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No hay más contactos.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         List<Contacto> contactosOrdenados = Arrays.stream(contactosArray)
                 .sorted(Comparator.comparing(
                         cont -> (cont.getAtributos().getOrDefault("nombre", "") + " " + cont.getAtributos().getOrDefault("apellido", ""))
@@ -129,12 +181,9 @@ public class MainActivity extends AppCompatActivity {
         navegador = new NavegadorContactos(contactosOrdenados);
         mostrarContacto(navegador.actual());
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Recarga para reflejar cambios si se agregó contacto nuevo
         Contacto[] contactosArray = gestorContactos.getTodos();
         if (contactosArray.length == 0) return;
 
@@ -144,17 +193,8 @@ public class MainActivity extends AppCompatActivity {
                                 .toLowerCase()
                 ))
                 .collect(Collectors.toList());
-
         if (navegador == null) {
             navegador = new NavegadorContactos(contactosOrdenados);
         }
     }
-
-
 }
-
-
-
-
-
-

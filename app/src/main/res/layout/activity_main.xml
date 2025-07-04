@@ -16,41 +16,80 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/layoutBotones"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusable="true">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tvNombreCompleto"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/linearLayoutContenido"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre Completo"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp">
 
-            <TextView
-                android:id="@+id/tvTipo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tipo"
-                android:textSize="18sp"
-                android:layout_marginTop="8dp" />
+                <ImageView
+                    android:id="@+id/imgFotoContacto"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="Foto del contacto"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_person_placeholder" />
 
-            <TextView
-                android:id="@+id/tvTelefonos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Teléfonos"
-                android:textSize="16sp"
-                android:layout_marginTop="12dp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp">
 
-        </LinearLayout>
+                    <Button
+                        android:id="@+id/btnFotoAnterior"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⟨" />
+
+                    <Button
+                        android:id="@+id/btnFotoSiguiente"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⟩"
+                        android:layout_marginStart="16dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvNombreCompleto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre Completo"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/tvTipo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo"
+                    android:textSize="18sp"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tvTelefonos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Teléfonos"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp" />
+
+            </LinearLayout>
+        </ScrollView>
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
@@ -59,10 +98,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/btnAnterior"
@@ -87,8 +126,3 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-

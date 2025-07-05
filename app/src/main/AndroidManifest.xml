@@ -26,6 +26,8 @@
         <activity android:name=".AgregarContactoActivity" />
         <activity android:name=".DetalleContactoActivity" />
         <activity android:name=".BuscarActivity" />
+        <activity android:name=".FiltrarActivity" />
+
 
     </application>
 

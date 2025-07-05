@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RadioGroup
+        android:id="@+id/rgFiltros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rbNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apellido o Nombre" />
+
+        <RadioButton
+            android:id="@+id/rbCantidadAtributos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cantidad de atributos" />
+
+        <RadioButton
+            android:id="@+id/rbCumpleanos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cumpleaños en mes" />
+
+        <RadioButton
+            android:id="@+id/rbEmpresa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Empresa" />
+
+        <RadioButton
+            android:id="@+id/rbProvincia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Provincia" />
+
+        <RadioButton
+            android:id="@+id/rbTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo de contacto" />
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/etFiltroTexto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ingrese valor para filtrar"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/btnAplicarFiltro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aplicar filtro"
+        android:layout_marginTop="8dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerResultados"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

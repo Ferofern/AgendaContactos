@@ -9,8 +9,7 @@
         android:title="Añadir"
         android:icon="@android:drawable/ic_input_add" />
     <item
-        android:id="@+id/nav_eliminar"
-        android:title="Eliminar"
-        android:icon="@android:drawable/ic_menu_delete" />
+        android:id="@+id/nav_filtrar"
+        android:title="Filtrar"
+        android:icon="@android:drawable/ic_menu_manage" />
 </menu>
-

@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAnterior, btnSiguiente;
     private BottomNavigationView bottomNavigation;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         tvNombreCompleto = findViewById(R.id.tvNombreCompleto);
         tvTipo = findViewById(R.id.tvTipo);
         tvTelefonos = findViewById(R.id.tvTelefonos);
@@ -101,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_anadir) {
                 anadirContacto();
                 return true;
-            } else if (id == R.id.nav_eliminar) {
-                eliminarContacto();
+            } else if (id == R.id.nav_filtrar) {  // Aquí se abre la nueva actividad FiltrarActivity
+                filtrarContactos();
                 return true;
             }
             return false;
@@ -121,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
 
         mostrarContacto(navegador.actual());
     }
-
-
 
     private void mostrarContacto(Contacto c) {
         String nombre = c.getAtributos().getOrDefault("nombre", "");
@@ -148,40 +144,23 @@ public class MainActivity extends AppCompatActivity {
         } else {
             imgFotoContacto.setImageResource(R.drawable.ic_person_placeholder);
         }
-
     }
 
     private void buscarContacto() {
         Intent intent = new Intent(this, BuscarActivity.class);
         startActivity(intent);
     }
+
     private void anadirContacto() {
         Intent intent = new Intent(this, AgregarContactoActivity.class);
         startActivity(intent);
     }
-    private void eliminarContacto() {
-        Contacto c = navegador.actual();
-        gestorContactos.eliminarContacto(c.getId());
-        Toast.makeText(this, "Contacto eliminado: " + c.getAtributos().getOrDefault("nombre", ""), Toast.LENGTH_SHORT).show();
 
-        Contacto[] contactosArray = gestorContactos.getTodos();
-        if (contactosArray.length == 0) {
-            tvNombreCompleto.setText("");
-            tvTipo.setText("");
-            tvTelefonos.setText("");
-            Toast.makeText(this, "No hay más contactos.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        List<Contacto> contactosOrdenados = Arrays.stream(contactosArray)
-                .sorted(Comparator.comparing(
-                        cont -> (cont.getAtributos().getOrDefault("nombre", "") + " " + cont.getAtributos().getOrDefault("apellido", ""))
-                                .toLowerCase()
-                ))
-                .collect(Collectors.toList());
-
-        navegador = new NavegadorContactos(contactosOrdenados);
-        mostrarContacto(navegador.actual());
+    private void filtrarContactos() {
+        Intent intent = new Intent(this, FiltrarActivity.class);
+        startActivity(intent);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -199,3 +178,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+

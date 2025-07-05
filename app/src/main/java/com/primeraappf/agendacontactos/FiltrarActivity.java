@@ -134,7 +134,7 @@ public class FiltrarActivity extends AppCompatActivity {
         } else if (idSeleccionado == R.id.rbCiudad) {
             String filtroCiudad = textoFiltro.toLowerCase(Locale.ROOT);
             for (Contacto c : todos) {
-                String ciudad = c.getAtributos().getOrDefault("ciudad", "").toLowerCase(Locale.ROOT);
+                String ciudad = c.getAtributos().getOrDefault("provincia", "").toLowerCase(Locale.ROOT);
                 if (ciudad.contains(filtroCiudad)) {
                     filtrados.add(c);
                 }

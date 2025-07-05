@@ -1,135 +1,157 @@
 package com.primeraappf.agendacontactos;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class DetalleContactoActivity extends AppCompatActivity {
 
-    private GestorContactos gestorContactos;
+    private EditText etNombreDetalle, etApellidoDetalle;
+    private TextView tvTipoDetalle, tvTelefonosDetalle, tvAtributosDetalle;
+    private LinearLayout layoutTelefonos, layoutAtributos, layoutAsociados;
+    private Button btnBorrarContacto, btnGuardarCambios;
+
     private Contacto contacto;
-
-    private TextView tvNombreDetalle;
-    private TextView tvTipoDetalle;
-    private TextView tvTelefonosDetalle;
-    private TextView tvAsociadosDetalle;
-    private LinearLayout layoutAtributos;
-    private Button btnBorrarContacto;
-    private Button btnGuardarCambios;
-
-    private String contactoId;
+    private GestorContactos gestor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_contacto);
 
-        gestorContactos = GestorContactos.getInstance(this);
+        gestor = GestorContactos.getInstance(this);
 
-        // Referencias UI
-        tvNombreDetalle = findViewById(R.id.tvNombreDetalle);
+        String contactoId = getIntent().getStringExtra("contacto_id");
+        contacto = gestor.getPorId(contactoId);
+
+        if (contacto == null) {
+            Toast.makeText(this, "Contacto no encontrado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        etNombreDetalle = findViewById(R.id.etNombreDetalle);
+        etApellidoDetalle = findViewById(R.id.etApellidoDetalle);
         tvTipoDetalle = findViewById(R.id.tvTipoDetalle);
         tvTelefonosDetalle = findViewById(R.id.tvTelefonosDetalle);
-        tvAsociadosDetalle = findViewById(R.id.tvAsociadosDetalle);
+        layoutTelefonos = findViewById(R.id.layoutTelefonos);
         layoutAtributos = findViewById(R.id.layoutAtributos);
+        layoutAsociados = findViewById(R.id.layoutAsociados);
         btnBorrarContacto = findViewById(R.id.btnBorrarContacto);
         btnGuardarCambios = findViewById(R.id.btnGuardarCambios);
 
-        contactoId = getIntent().getStringExtra("contacto_id");
-
-        if (contactoId != null) {
-            contacto = gestorContactos.getPorId(contactoId);
-            if (contacto != null) {
-                mostrarDetalleContacto(contacto);
-            }
-        }
+        mostrarContacto();
 
         btnBorrarContacto.setOnClickListener(v -> {
-            gestorContactos.eliminarContacto(contactoId);
-            gestorContactos.guardarContactos();
-            Toast.makeText(this, "Contacto borrado", Toast.LENGTH_SHORT).show();
+            gestor.eliminarContacto(contacto.getId());
+            gestor.guardarContactos();
+            Toast.makeText(this, "Contacto eliminado", Toast.LENGTH_SHORT).show();
             finish();
         });
 
-        btnGuardarCambios.setOnClickListener(v -> {
-            Map<String, String> nuevosAtributos = new HashMap<>();
-
-            for (int i = 0; i < layoutAtributos.getChildCount(); i++) {
-                LinearLayout fila = (LinearLayout) layoutAtributos.getChildAt(i);
-                TextView tvClave = (TextView) fila.getChildAt(0);
-                EditText etValor = (EditText) fila.getChildAt(1);
-
-                String clave = tvClave.getText().toString().replace(":", "").trim();
-                String valor = etValor.getText().toString().trim();
-                nuevosAtributos.put(clave, valor);
-            }
-
-            contacto.setAtributos(nuevosAtributos);
-            gestorContactos.guardarContactos();
-            Toast.makeText(this, "Cambios guardados", Toast.LENGTH_SHORT).show();
-        });
+        btnGuardarCambios.setOnClickListener(v -> guardarCambios());
     }
 
-    private void mostrarDetalleContacto(Contacto c) {
-        // Nombre y tipo
-        String nombre = c.getAtributos().getOrDefault("nombre", "Sin nombre");
-        String apellido = c.getAtributos().getOrDefault("apellido", "");
-        tvNombreDetalle.setText(nombre + " " + apellido);
-        tvTipoDetalle.setText("Tipo: " + c.getTipo());
+    private void mostrarContacto() {
+        String nombre = contacto.getAtributos().getOrDefault("nombre", "");
+        String apellido = contacto.getAtributos().getOrDefault("apellido", "");
 
-        // Teléfonos
-        StringBuilder telefonos = new StringBuilder("Teléfonos:\n");
-        for (int i = 0; i < c.getTotalTelefonos(); i++) {
-            telefonos.append("- ").append(c.getTelefonosArray()[i]).append("\n");
+        etNombreDetalle.setText(nombre);
+        etApellidoDetalle.setText(apellido);
+
+        tvTipoDetalle.setText("Tipo: " + contacto.getTipo());
+
+        layoutTelefonos.removeAllViews();
+        for (int i = 0; i < contacto.getTotalTelefonos(); i++) {
+            EditText etTelefono = new EditText(this);
+            etTelefono.setHint("Teléfono " + (i + 1));
+            etTelefono.setText(contacto.getTelefonosArray()[i]);
+            layoutTelefonos.addView(etTelefono);
         }
-        tvTelefonosDetalle.setText(telefonos.toString());
 
-        // Atributos (editable)
         layoutAtributos.removeAllViews();
-        for (Map.Entry<String, String> entry : c.getAtributos().entrySet()) {
-            String clave = entry.getKey();
-            String valor = entry.getValue();
+        for (Map.Entry<String, String> entry : contacto.getAtributos().entrySet()) {
+            TextView atributoView = new TextView(this);
+            atributoView.setText(entry.getKey() + ": " + entry.getValue());
+            layoutAtributos.addView(atributoView);
+        }
 
-            LinearLayout fila = new LinearLayout(this);
-            fila.setOrientation(LinearLayout.HORIZONTAL);
+        layoutAsociados.removeAllViews();
+        Contacto[] asociados = contacto.getAsociadosArray();
+        int total = contacto.getTotalAsociados();
 
-            TextView tvClave = new TextView(this);
-            tvClave.setText(clave + ": ");
-            fila.addView(tvClave);
+        for (int i = 0; i < total; i++) {
+            Contacto asociado = asociados[i];
+            if (asociado == null) continue;
 
-            EditText etValor = new EditText(this);
-            etValor.setText(valor);
-            etValor.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-            fila.addView(etValor);
+            String nom = asociado.getAtributos().getOrDefault("nombre", "Sin nombre");
+            String ape = asociado.getAtributos().getOrDefault("apellido", "");
+            String nomCompleto = (nom + " " + ape).trim();
 
-            Button btnEliminar = new Button(this);
-            btnEliminar.setText("🗑");
-            btnEliminar.setOnClickListener(v -> {
-                contacto.eliminarAtributo(clave);
-                layoutAtributos.removeView(fila);
-                Toast.makeText(this, "Atributo eliminado", Toast.LENGTH_SHORT).show();
+            TextView asociadoView = new TextView(this);
+            asociadoView.setText("👤 " + nomCompleto);
+            asociadoView.setTextSize(16);
+            asociadoView.setPadding(16, 8, 16, 8);
+
+            asociadoView.setOnClickListener(v -> {
+                Intent intent = new Intent(DetalleContactoActivity.this, DetalleContactoActivity.class);
+                intent.putExtra("contacto_id", asociado.getId());
+                startActivity(intent);
             });
-            fila.addView(btnEliminar);
 
-            layoutAtributos.addView(fila);
+            layoutAsociados.addView(asociadoView);
+        }
+    }
+
+    private void guardarCambios() {
+        String nuevoNombre = etNombreDetalle.getText().toString().trim();
+        String nuevoApellido = etApellidoDetalle.getText().toString().trim();
+
+        if (TextUtils.isEmpty(nuevoNombre) && TextUtils.isEmpty(nuevoApellido)) {
+            Toast.makeText(this, "Debe ingresar al menos un nombre o apellido", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // Asociados
-        StringBuilder asociados = new StringBuilder("Contactos asociados:\n");
-        for (int i = 0; i < c.getTotalAsociados(); i++) {
-            Contacto asociado = c.getAsociadosArray()[i];
-            String nombreAsociado = asociado.getAtributos().getOrDefault("nombre", asociado.getId());
-            asociados.append("- ").append(nombreAsociado).append("\n");
+        contacto.addAtributo("nombre", nuevoNombre);
+        contacto.addAtributo("apellido", nuevoApellido);
+
+        contacto.getTelefonosArray();
+
+        try {
+            java.lang.reflect.Field fieldTotalTel = Contacto.class.getDeclaredField("totalTelefonos");
+            fieldTotalTel.setAccessible(true);
+            fieldTotalTel.setInt(contacto, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error interno al guardar teléfonos", Toast.LENGTH_SHORT).show();
+            return;
         }
-        tvAsociadosDetalle.setText(asociados.toString());
+
+        int countTelefonosNuevos = 0;
+        for (int i = 0; i < layoutTelefonos.getChildCount(); i++) {
+            View child = layoutTelefonos.getChildAt(i);
+            if (child instanceof EditText) {
+                String tel = ((EditText) child).getText().toString().trim();
+                if (!tel.isEmpty()) {
+                    contacto.addTelefono(tel);
+                    countTelefonosNuevos++;
+                }
+            }
+        }
+
+        if (countTelefonosNuevos == 0) {
+            Toast.makeText(this, "Debe ingresar al menos un teléfono", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        gestor.guardarContactos();
+        Toast.makeText(this, "Cambios guardados", Toast.LENGTH_SHORT).show();
+
+        mostrarContacto();
     }
 }

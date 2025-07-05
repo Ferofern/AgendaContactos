@@ -40,6 +40,18 @@ public class GestorContactos {
         String id = numeroCola + ultimosDos;
         Contacto c = new Contacto(id, tipo, telefonoInicial);
         contactos.put(id, c);
+
+        Vector<String> fotosPorDefecto = new Vector<>();
+
+        if (tipo.equalsIgnoreCase("Persona")) {
+            fotosPorDefecto.add("foto_persona1.jpg");
+            fotosPorDefecto.add("foto_persona2.jpg");
+        } else if (tipo.equalsIgnoreCase("Empresa")) {
+            fotosPorDefecto.add("foto_empresa1.jpg");
+            fotosPorDefecto.add("foto_empresa2.jpg");
+        }
+        c.setFotos(fotosPorDefecto);
+
         return c;
     }
 

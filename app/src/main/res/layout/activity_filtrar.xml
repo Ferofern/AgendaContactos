@@ -35,10 +35,10 @@
             android:text="Empresa" />
 
         <RadioButton
-            android:id="@+id/rbProvincia"
+            android:id="@+id/rbCiudad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Provincia" />
+            android:text="Ciudad" />
 
         <RadioButton
             android:id="@+id/rbTipo"

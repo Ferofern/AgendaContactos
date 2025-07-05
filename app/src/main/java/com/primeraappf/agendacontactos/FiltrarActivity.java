@@ -1,5 +1,6 @@
 package com.primeraappf.agendacontactos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -49,8 +50,8 @@ public class FiltrarActivity extends AppCompatActivity {
                 etFiltroTexto.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
             } else if (checkedId == R.id.rbEmpresa) {
                 etFiltroTexto.setHint("Ingrese nombre de empresa");
-            } else if (checkedId == R.id.rbProvincia) {
-                etFiltroTexto.setHint("Ingrese provincia");
+            } else if (checkedId == R.id.rbCiudad) {
+                etFiltroTexto.setHint("Ingrese ciudad");
             } else if (checkedId == R.id.rbTipo) {
                 etFiltroTexto.setHint("Ingrese tipo (Persona natural / Empresa)");
             } else {
@@ -130,11 +131,11 @@ public class FiltrarActivity extends AppCompatActivity {
                     filtrados.add(c);
                 }
             }
-        } else if (idSeleccionado == R.id.rbProvincia) {
-            String filtroProvincia = textoFiltro.toLowerCase(Locale.ROOT);
+        } else if (idSeleccionado == R.id.rbCiudad) {
+            String filtroCiudad = textoFiltro.toLowerCase(Locale.ROOT);
             for (Contacto c : todos) {
-                String provincia = c.getAtributos().getOrDefault("provincia", "").toLowerCase(Locale.ROOT);
-                if (provincia.contains(filtroProvincia)) {
+                String ciudad = c.getAtributos().getOrDefault("ciudad", "").toLowerCase(Locale.ROOT);
+                if (ciudad.contains(filtroCiudad)) {
                     filtrados.add(c);
                 }
             }
@@ -152,7 +153,12 @@ public class FiltrarActivity extends AppCompatActivity {
             Toast.makeText(this, "No se encontraron contactos con ese filtro", Toast.LENGTH_LONG).show();
         }
 
-        adapter = new ContactoAdapter(filtrados, contacto -> {});
+        adapter = new ContactoAdapter(filtrados, contacto -> {
+            Intent intent = new Intent(FiltrarActivity.this, DetalleContactoActivity.class);
+            intent.putExtra("contacto_id", contacto.getId());
+            startActivity(intent);
+        });
+
         recyclerResultados.setAdapter(adapter);
     }
 }

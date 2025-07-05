@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/ordenar_apellido"
+        android:title="Ordenar por Apellido" />
+    <item android:id="@+id/ordenar_tipo"
+        android:title="Ordenar por Tipo" />
+    <item android:id="@+id/ordenar_provincia"
+        android:title="Ordenar por Provincia" />
+</menu>

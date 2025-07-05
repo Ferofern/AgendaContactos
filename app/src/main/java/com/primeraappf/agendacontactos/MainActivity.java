@@ -3,6 +3,8 @@ package com.primeraappf.agendacontactos;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_anadir) {
                 anadirContacto();
                 return true;
-            } else if (id == R.id.nav_filtrar) {  // Aquí se abre la nueva actividad FiltrarActivity
+            } else if (id == R.id.nav_filtrar) {
                 filtrarContactos();
                 return true;
             }
@@ -139,7 +141,17 @@ public class MainActivity extends AppCompatActivity {
             if (file.exists()) {
                 imgFotoContacto.setImageURI(Uri.fromFile(file));
             } else {
-                imgFotoContacto.setImageResource(R.drawable.ic_person_placeholder);
+                String nombreSinExtension = rutaFoto.contains(".") ?
+                        rutaFoto.substring(0, rutaFoto.lastIndexOf(".")) :
+                        rutaFoto;
+
+                int resId = getResources().getIdentifier(nombreSinExtension, "drawable", getPackageName());
+
+                if (resId != 0) {
+                    imgFotoContacto.setImageResource(resId);
+                } else {
+                    imgFotoContacto.setImageResource(R.drawable.ic_person_placeholder);
+                }
             }
         } else {
             imgFotoContacto.setImageResource(R.drawable.ic_person_placeholder);
@@ -162,6 +174,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_ordenar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.ordenar_apellido) {
+            ordenarContactos("apellido");
+            return true;
+        } else if (id == R.id.ordenar_tipo) {
+            ordenarContactos("tipo");
+            return true;
+        } else if (id == R.id.ordenar_provincia) {
+            ordenarContactos("provincia");
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    private void ordenarContactos(String criterio) {
+        Contacto[] todos = gestorContactos.getTodos();
+        List<Contacto> lista = Arrays.stream(todos).collect(Collectors.toList());
+
+        Comparator<Contacto> comparador;
+
+        switch (criterio) {
+            case "apellido":
+                comparador = Comparator.comparing(
+                        c -> c.getAtributos().getOrDefault("apellido", "").toLowerCase()
+                );
+                break;
+            case "tipo":
+                comparador = Comparator.comparing(
+                        c -> c.getTipo().toLowerCase()
+                );
+                break;
+            case "provincia":
+                comparador = Comparator.comparing(
+                        c -> c.getAtributos().getOrDefault("provincia", "").toLowerCase()
+                );
+                break;
+            default:
+                return;
+        }
+
+        lista.sort(comparador);
+        navegador = new NavegadorContactos(lista);
+        mostrarContacto(navegador.actual());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Contacto[] contactosArray = gestorContactos.getTodos();
@@ -178,5 +246,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
-

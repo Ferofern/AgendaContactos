@@ -10,14 +10,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvNombreDetalle"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/etNombreDetalle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre"
+            android:hint="Nombre"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etApellidoDetalle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/tvTipoDetalle"
@@ -33,6 +42,13 @@
             android:layout_height="wrap_content"
             android:text="Teléfonos"
             android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/layoutTelefonos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginBottom="16dp"/>
 
         <TextView
@@ -58,6 +74,13 @@
             android:textSize="16sp"
             android:layout_marginBottom="24dp"/>
 
+        <LinearLayout
+            android:id="@+id/layoutAsociados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"/>
+
         <Button
             android:id="@+id/btnBorrarContacto"
             android:layout_width="match_parent"
@@ -76,5 +99,3 @@
 
     </LinearLayout>
 </ScrollView>
-
-
